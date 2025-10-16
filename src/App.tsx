@@ -306,6 +306,10 @@ const App: React.FC = () => {
         console.warn('Erro ao carregar roteiros salvos');
       }
     }
+    const savedVoiceButtons = localStorage.getItem('roteiro_voice_buttons_enabled');
+    if (savedVoiceButtons !== null) {
+      setVoiceButtonsEnabled(savedVoiceButtons === 'true');
+    }
   }, []);
 
   // 🔹 Salva cenas sempre que mudar
@@ -327,6 +331,11 @@ const App: React.FC = () => {
   useEffect(() => {
     localStorage.setItem('roteiro_ideas', JSON.stringify(ideas));
   }, [ideas]);
+
+  // 🔹 Salva estado dos botões de voz sempre que mudar
+  useEffect(() => {
+    localStorage.setItem('roteiro_voice_buttons_enabled', voiceButtonsEnabled.toString());
+  }, [voiceButtonsEnabled]);
 
   // Adiciona cena
   const addScene = useCallback(() => {
