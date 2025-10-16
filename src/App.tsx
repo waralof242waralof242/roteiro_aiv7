@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import './App.css';
-import { loadVoiceButtonPreference, saveVoiceButtonPreference } from './userPreferences';
 
 // --- Tipos ---
 interface Dialogue {
@@ -273,46 +272,40 @@ const App: React.FC = () => {
   const holdTimerRef = useRef<NodeJS.Timeout | null>(null);
   const isHoldingRef = useRef<boolean>(false);
 
+  // 🔹 Carrega dados do localStorage ao iniciar
   useEffect(() => {
-    const loadData = async () => {
-      const saved = localStorage.getItem('roteiro_scenes');
-      if (saved) {
-        try {
-          setScenes(JSON.parse(saved));
-        } catch {
-          console.warn('Erro ao carregar cenas salvas');
-        }
+    const saved = localStorage.getItem('roteiro_scenes');
+    if (saved) {
+      try {
+        setScenes(JSON.parse(saved));
+      } catch {
+        console.warn('Erro ao carregar cenas salvas');
       }
-      const savedNotes = localStorage.getItem('roteiro_notes');
-      if (savedNotes) {
-        setNotes(savedNotes);
+    }
+    const savedNotes = localStorage.getItem('roteiro_notes');
+    if (savedNotes) {
+      setNotes(savedNotes);
+    }
+    const savedCounter = localStorage.getItem('roteiro_counter');
+    if (savedCounter) {
+      setCounter(parseInt(savedCounter, 10));
+    }
+    const savedIdeas = localStorage.getItem('roteiro_ideas');
+    if (savedIdeas) {
+      try {
+        setIdeas(JSON.parse(savedIdeas));
+      } catch {
+        console.warn('Erro ao carregar ideias salvas');
       }
-      const savedCounter = localStorage.getItem('roteiro_counter');
-      if (savedCounter) {
-        setCounter(parseInt(savedCounter, 10));
+    }
+    const savedScriptsList = localStorage.getItem('roteiro_saved_scripts');
+    if (savedScriptsList) {
+      try {
+        setSavedScripts(JSON.parse(savedScriptsList));
+      } catch {
+        console.warn('Erro ao carregar roteiros salvos');
       }
-      const savedIdeas = localStorage.getItem('roteiro_ideas');
-      if (savedIdeas) {
-        try {
-          setIdeas(JSON.parse(savedIdeas));
-        } catch {
-          console.warn('Erro ao carregar ideias salvas');
-        }
-      }
-      const savedScriptsList = localStorage.getItem('roteiro_saved_scripts');
-      if (savedScriptsList) {
-        try {
-          setSavedScripts(JSON.parse(savedScriptsList));
-        } catch {
-          console.warn('Erro ao carregar roteiros salvos');
-        }
-      }
-
-      const voicePreference = await loadVoiceButtonPreference();
-      setVoiceButtonsEnabled(voicePreference);
-    };
-
-    loadData();
+    }
   }, []);
 
   // 🔹 Salva cenas sempre que mudar
@@ -939,11 +932,7 @@ const App: React.FC = () => {
               <p>Falas: <strong>{scenes.reduce((sum, scene) => sum + scene.dialogues.length, 0)}</strong></p>
               <button
                 className={`voice-toggle-button ${voiceButtonsEnabled ? 'enabled' : 'disabled'}`}
-                onClick={async () => {
-                  const newState = !voiceButtonsEnabled;
-                  setVoiceButtonsEnabled(newState);
-                  await saveVoiceButtonPreference(newState);
-                }}
+                onClick={() => setVoiceButtonsEnabled(!voiceButtonsEnabled)}
                 title={voiceButtonsEnabled ? 'Desativar gravação de voz' : 'Ativar gravação de voz'}
               >
                 {voiceButtonsEnabled ? '🔴' : '⭕'}

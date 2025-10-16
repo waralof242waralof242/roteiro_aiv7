@@ -1,1 +1,1 @@
-{"root":["./src/App.tsx","./src/global.d.ts","./src/main.tsx","./src/supabaseClient.ts","./src/userPreferences.ts"],"version":"5.8.3"}
+{"root":["./src/App.tsx","./src/global.d.ts","./src/main.tsx"],"version":"5.8.3"}
